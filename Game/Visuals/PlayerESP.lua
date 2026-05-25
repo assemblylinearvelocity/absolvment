@@ -1,10 +1,8 @@
--- Player ESP Module
 local PlayerESP = {}
 PlayerESP.Enabled = false
 PlayerESP.Connections = {}
 PlayerESP.ESPObjects = {}
 
--- ESP Settings
 PlayerESP.Settings = {
     ShowBox = true,
     ShowName = true,
@@ -25,7 +23,6 @@ local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 
--- Create ESP for a player
 function PlayerESP:CreateESP(player)
     if player == LocalPlayer then return end
     if self.ESPObjects[player] then return end
@@ -83,7 +80,6 @@ function PlayerESP:CreateESP(player)
     self.ESPObjects[player] = ESPObject
 end
 
--- Remove ESP for a player
 function PlayerESP:RemoveESP(player)
     local ESPObject = self.ESPObjects[player]
     if not ESPObject then return end
@@ -95,7 +91,6 @@ function PlayerESP:RemoveESP(player)
     self.ESPObjects[player] = nil
 end
 
--- Update ESP
 function PlayerESP:UpdateESP()
     if not self.Enabled then return end
     
@@ -118,7 +113,6 @@ function PlayerESP:UpdateESP()
             continue
         end
         
-        -- Team check
         if self.Settings.TeamCheck and player.Team == LocalPlayer.Team then
             for _, drawing in pairs(ESPObject.Drawings) do
                 drawing.Visible = false
@@ -135,7 +129,6 @@ function PlayerESP:UpdateESP()
             continue
         end
         
-        -- Calculate box size
         local head = character:FindFirstChild("Head")
         if not head then
             for _, drawing in pairs(ESPObject.Drawings) do
@@ -150,7 +143,6 @@ function PlayerESP:UpdateESP()
         local height = math.abs(headPos.Y - legPos.Y)
         local width = height / 2
         
-        -- Update Box
         if self.Settings.ShowBox then
             local Box = ESPObject.Drawings.Box
             Box.Size = Vector2.new(width, height)
@@ -161,7 +153,6 @@ function PlayerESP:UpdateESP()
             ESPObject.Drawings.Box.Visible = false
         end
         
-        -- Update Name
         if self.Settings.ShowName then
             local Name = ESPObject.Drawings.Name
             Name.Position = Vector2.new(vector.X, vector.Y - height / 2 - 16)
@@ -172,14 +163,12 @@ function PlayerESP:UpdateESP()
             ESPObject.Drawings.Name.Visible = false
         end
         
-        -- Update Health
         if self.Settings.ShowHealth then
             local HealthText = ESPObject.Drawings.HealthText
             local healthPercent = math.floor((humanoid.Health / humanoid.MaxHealth) * 100)
             HealthText.Position = Vector2.new(vector.X, vector.Y + height / 2 + 2)
             HealthText.Text = string.format("%d HP (%d%%)", math.floor(humanoid.Health), healthPercent)
             
-            -- Color based on health
             if healthPercent > 75 then
                 HealthText.Color = Color3.fromRGB(0, 255, 0)
             elseif healthPercent > 50 then
@@ -195,7 +184,6 @@ function PlayerESP:UpdateESP()
             ESPObject.Drawings.HealthText.Visible = false
         end
         
-        -- Update Distance
         if self.Settings.ShowDistance then
             local Distance = ESPObject.Drawings.Distance
             local distance = (LocalPlayer.Character.HumanoidRootPart.Position - humanoidRootPart.Position).Magnitude
@@ -207,7 +195,6 @@ function PlayerESP:UpdateESP()
             ESPObject.Drawings.Distance.Visible = false
         end
         
-        -- Update Tracer
         if self.Settings.ShowTracer then
             local Tracer = ESPObject.Drawings.Tracer
             Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
@@ -220,42 +207,34 @@ function PlayerESP:UpdateESP()
     end
 end
 
--- Enable ESP
 function PlayerESP:Enable()
     self.Enabled = true
     
-    -- Create ESP for existing players
     for _, player in pairs(Players:GetPlayers()) do
         self:CreateESP(player)
     end
     
-    -- Connect to new players
     self.Connections.PlayerAdded = Players.PlayerAdded:Connect(function(player)
         self:CreateESP(player)
     end)
     
-    -- Connect to player removing
     self.Connections.PlayerRemoving = Players.PlayerRemoving:Connect(function(player)
         self:RemoveESP(player)
     end)
     
-    -- Update loop
     self.Connections.RenderStepped = RunService.RenderStepped:Connect(function()
         self:UpdateESP()
     end)
 end
 
--- Disable ESP
 function PlayerESP:Disable()
     self.Enabled = false
     
-    -- Disconnect all connections
     for _, connection in pairs(self.Connections) do
         connection:Disconnect()
     end
     self.Connections = {}
     
-    -- Remove all ESP objects
     for player, _ in pairs(self.ESPObjects) do
         self:RemoveESP(player)
     end
