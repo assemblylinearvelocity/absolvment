@@ -1,12 +1,7 @@
--- Settings Tab UI
 local SettingsTab = {}
 
 function SettingsTab:Create(Window, Library, ThemeManager, SaveManager)
     local Tab = Window:AddTab("UI Settings", "settings")
-    
-    -- ========================================
-    -- MENU SETTINGS
-    -- ========================================
     
     local MenuGroup = Tab:AddLeftGroupbox("Menu", "wrench")
     
@@ -69,13 +64,6 @@ function SettingsTab:Create(Window, Library, ThemeManager, SaveManager)
     end)
     
     Library.ToggleKeybind = Library.Options.MenuKeybind
-    
-    -- ========================================
-    -- THEME & CONFIG
-    -- ========================================
-    
-    SaveManager:BuildConfigSection(Tab)
-    ThemeManager:ApplyToTab(Tab)
     
     return Tab
 end

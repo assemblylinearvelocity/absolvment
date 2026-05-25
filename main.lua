@@ -71,7 +71,6 @@ task.spawn(function()
         VisualsTab:Create(Window, PlayerESP, NPCESP)
         AutomationTab:Create(Window)
         MiscTab:Create(Window)
-        SettingsTab:Create(Window, Library, ThemeManager, SaveManager)
         
         ThemeManager:SetLibrary(Library)
         SaveManager:SetLibrary(Library)
@@ -81,6 +80,8 @@ task.spawn(function()
         
         ThemeManager:SetFolder("AbsolvmentHub")
         SaveManager:SetFolder("AbsolvmentHub/Absolvment")
+        
+        SettingsTab:Create(Window, Library, ThemeManager, SaveManager)
         
         SaveManager:LoadAutoloadConfig()
         
