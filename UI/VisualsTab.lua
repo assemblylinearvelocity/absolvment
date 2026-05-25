@@ -1,7 +1,114 @@
 -- Visuals Tab UI
 local VisualsTab = {}
 
-function VisualsTab:Create(Window, PlayerESP, NPCESP)
+function VisualsTab:Create(Window, ESP, NPCESP)
+    local Tab = Window:AddTab("Visuals", "eye")
+    
+    local PlayerESPBox = Tab:AddLeftGroupbox("Player ESP", "users")
+    
+    PlayerESPBox:AddToggle("PlayerESPEnabled", {
+        Text = "Enable Player ESP",
+        Default = false,
+        Tooltip = "Show ESP for other players",
+        Callback = function(Value)
+            if Value then
+                ESP:Init(require(game.ReplicatedStorage.PlayerRenderer))
+            else
+                ESP:Unload()
+            end
+        end,
+    })
+    
+    PlayerESPBox:AddToggle("PlayerESPBox", {
+        Text = "Show Box",
+        Default = true,
+        Tooltip = "Show box around players",
+    })
+    
+    PlayerESPBox:AddToggle("PlayerESPName", {
+        Text = "Show Name",
+        Default = true,
+        Tooltip = "Show player names",
+    })
+    
+    PlayerESPBox:AddToggle("PlayerESPHealth", {
+        Text = "Show Health",
+        Default = true,
+        Tooltip = "Show player health",
+    })
+    
+    PlayerESPBox:AddToggle("PlayerESPDistance", {
+        Text = "Show Distance",
+        Default = true,
+        Tooltip = "Show distance to players",
+    })
+    
+    local NPCESPBox = Tab:AddRightGroupbox("NPC/Mob ESP", "skull")
+    
+    NPCESPBox:AddToggle("NPCESPEnabled", {
+        Text = "Enable NPC ESP",
+        Default = false,
+        Tooltip = "Show ESP for NPCs/Mobs",
+        Callback = function(Value)
+            if Value then
+                NPCESP:Enable()
+            else
+                NPCESP:Disable()
+            end
+        end,
+    })
+    
+    NPCESPBox:AddToggle("NPCESPBox", {
+        Text = "Show Box",
+        Default = true,
+        Tooltip = "Show box around NPCs",
+        Callback = function(Value)
+            NPCESP.Settings.ShowBox = Value
+        end,
+    })
+    
+    NPCESPBox:AddToggle("NPCESPName", {
+        Text = "Show Name",
+        Default = true,
+        Tooltip = "Show NPC names",
+        Callback = function(Value)
+            NPCESP.Settings.ShowName = Value
+        end,
+    })
+    
+    NPCESPBox:AddToggle("NPCESPHealth", {
+        Text = "Show Health",
+        Default = true,
+        Tooltip = "Show NPC health",
+        Callback = function(Value)
+            NPCESP.Settings.ShowHealth = Value
+        end,
+    })
+    
+    NPCESPBox:AddToggle("NPCESPDistance", {
+        Text = "Show Distance",
+        Default = true,
+        Tooltip = "Show distance to NPCs",
+        Callback = function(Value)
+            NPCESP.Settings.ShowDistance = Value
+        end,
+    })
+    
+    NPCESPBox:AddButton({
+        Text = "Rescan NPCs",
+        Func = function()
+            if NPCESP.Enabled then
+                NPCESP:ScanNPCs()
+            end
+        end,
+        Tooltip = "Manually rescan for NPCs in the world",
+    })
+    
+    return Tab
+end
+
+return VisualsTab
+
     local Tab = Window:AddTab("Visuals", "eye")
     
     -- ========================================

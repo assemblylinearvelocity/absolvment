@@ -36,8 +36,11 @@ task.spawn(function()
     local SaveManager = loadModule("GUI/addons/SaveManager.lua")
     if not SaveManager then return warn("Failed to load SaveManager") end
     
-    local PlayerESP = loadModule("Game/Visuals/PlayerESP.lua")
-    if not PlayerESP then return warn("Failed to load PlayerESP") end
+    local PlayerRenderer = loadModule("Game/Visuals/PlayerRenderer.lua")
+    if not PlayerRenderer then return warn("Failed to load PlayerRenderer") end
+    
+    local ESP = loadModule("Game/Visuals/ESP.lua")
+    if not ESP then return warn("Failed to load ESP") end
     
     local NPCESP = loadModule("Game/Visuals/NPCESP.lua")
     if not NPCESP then return warn("Failed to load NPCESP") end
@@ -68,7 +71,7 @@ task.spawn(function()
             ShowCustomCursor = true,
         })
         
-        VisualsTab:Create(Window, PlayerESP, NPCESP)
+        VisualsTab:Create(Window, ESP, NPCESP)
         AutomationTab:Create(Window)
         MiscTab:Create(Window)
         
@@ -83,6 +86,8 @@ task.spawn(function()
         
         SettingsTab:Create(Window, Library, ThemeManager, SaveManager)
         
+        ESP:Init(PlayerRenderer)
+        
         SaveManager:LoadAutoloadConfig()
         
         Library:Notify({
@@ -95,7 +100,7 @@ task.spawn(function()
     end
     
     function Absolvment.detach()
-        pcall(function() PlayerESP:Disable() end)
+        pcall(function() ESP:Unload() end)
         pcall(function() NPCESP:Disable() end)
         if Library then Library:Unload() end
     end
